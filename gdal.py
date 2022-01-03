@@ -22,16 +22,30 @@ if __name__ == '__main__':
     shutil.copy(jsonPath, outputPath)
 
     # Open the copied geoJson file
-    with open(outputPath) as f:
+    with open(outputPath, "r+", encoding='utf-8') as f:
         data = json.load(f)
-        x = 0
+        progress = 1 # For progress indicator
         for feature in data['features']:
+            print("Getting tilecounts: %s of %s"%(progress, str(len(data["features"]))))
             value = val_at_coord(feature['geometry']['coordinates'])
             feature.update({"tilecount": value})
-            x = x + 1
-            print("progress: %s of %s"%(x, str(len(data["features"]))))
+            progress += 1
+            
+        # Sort features by tilecount, highest first
+        print("Sorting dataset...")
+        data['features'] = sorted(data['features'], key=lambda x : x['tilecount'])
+        print("Dataset sorted.")
 
-        f.write(json.dumps(data, f, indent=4))
+        progress = 1
+        for feature in data['features']:
+            print("Ranking tilecounts: %s of %s"%(progress, str(len(data["features"]))))
+            feature.update({"rank": progress})
+            progress += 1
+            
+        # Clear old data and save data to file
+        f.seek(0)
+        f.truncate
+        json.dump(data, f, indent=4)
 
-    print("Done.")
+    print("Done. \n")
 
