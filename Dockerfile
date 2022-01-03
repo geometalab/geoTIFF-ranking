@@ -13,6 +13,7 @@ RUN apt-get install libgdal-dev -y
 RUN export CPLUS_INCLUDE_PATH=/usr/include/gdal
 RUN export C_INCLUDE_PATH=/usr/include/gdal
 RUN pip install GDAL
+RUN pip install geojson
 
 WORKDIR /usr/src/app
 COPY . .
