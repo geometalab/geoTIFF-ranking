@@ -25,15 +25,14 @@ def find_file(extensions):
     num_of_occurrences = 0
 
     found_file = 0
-    for root, dirs, files in os.walk(dir_path):
-        for file in files:
-            for extension in extensions:
-                if file.endswith(extension):
-                    if file != output_path:
-                        num_of_occurrences += 1
-                        found_file = file
-                    else:
-                        print("Can not use %s as this is an output file." % output_path)
+    for file in os.listdir():
+        for extension in extensions:
+            if file.endswith(extension):
+                if file != output_path:
+                    num_of_occurrences += 1
+                    found_file = file
+                else:
+                    print("Can not use %s as this is an output file." % output_path)
 
     if num_of_occurrences == 0:
         print('Could not find any %s files. Please place one in the same directory as this script.' % extensions)
@@ -44,7 +43,8 @@ def find_file(extensions):
         return found_file
 
     if num_of_occurrences > 1:
-        found_file = input('Multiple %s files found. Please enter the %s file which you want to use: \n' % (extensions, extensions))
+        found_file = input(
+            'Multiple %s files found. Please enter the %s file which you want to use: \n' % (extensions, extensions))
         if exists(found_file):
             return found_file
         else:
@@ -76,9 +76,9 @@ def main():
         data['features'] = sorted(data['features'], key=lambda x: x['tile count'])
         print("Dataset sorted.")
 
+        print("Ranking tile counts...")
         progress = 1
         for feature in data['features']:
-            print("Ranking tile counts: %s of %s" % (progress, str(len(data["features"]))))
             feature.update({"rank": progress})
             progress += 1
 
