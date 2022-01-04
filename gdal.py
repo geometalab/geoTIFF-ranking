@@ -1,5 +1,4 @@
 import os
-import sys
 import subprocess
 import json
 import shutil
@@ -14,17 +13,16 @@ def val_at_coord(coordinates):
     result = subprocess.run(['gdallocationinfo', tif_path, '-xml', '-wgs84', str(coordinates[0]), str(coordinates[1])],
                             capture_output=True, text=True)
     if result.stderr != "":
-        raise Exception("Exeption while excecuting gdallocationinfo: " + result.stderr)
+        raise Exception("Exception while executing gdallocationinfo: " + result.stderr)
     xml = result.stdout
     result = xml[xml.find('<Value>') + 7: xml.find('</Value>')]
     return result
 
 
 def find_file(extensions):
-    dir_path = os.path.dirname(os.path.realpath(__file__))
     num_of_occurrences = 0
-
     found_file = 0
+
     for file in os.listdir():
         for extension in extensions:
             if file.endswith(extension):
@@ -74,7 +72,6 @@ def main():
         # Sort features by tilecount, highest first
         print("Sorting dataset...")
         data['features'] = sorted(data['features'], key=lambda x: x['tile count'])
-        print("Dataset sorted.")
 
         print("Ranking tile counts...")
         progress = 1
@@ -85,7 +82,7 @@ def main():
         # Clear old data and save data to file
         f.seek(0)
         f.truncate()
-        json.dump(data, f, indent=4)
+        json.dump(data, f, indent=4, ensure_ascii=False)
 
     print("Done. \n")
 
