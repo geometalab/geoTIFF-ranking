@@ -19,6 +19,7 @@ def val_at_coord(coordinates):
     return result
 
 
+# Finds the tif_path and json_path file and prompts user if multiple are found/aborts if none are found
 def find_file(extensions):
     num_of_occurrences = 0
     found_file = 0
@@ -49,17 +50,30 @@ def find_file(extensions):
             print("File %s does not exist" % found_file)
             exit()
 
+
+# checks if the geometry of the feature is a point and warns if not
+# also the place for future handling of areas
+# TODO handling of areas/relations
+def calculate_coordinates(feature):
+    if feature['geometry']['type'] == "Point":
+        return feature['geometry']['coordinates']
+    else:
+        print('The feature %s is not a Point. As this script only supports point, replace your out statement in your '
+              'overpass turbo query with "out center;"')
+        exit()
+
+
+# outputs a minimalist version of the json, only containing name, coordinates and tilecount
 def reduce_content(data):
     for feature in data['features']:
         name = feature['properties']['name']
-        feature.update({"name": name})
         del feature['properties']
-        del feature['type']
+        feature.update({"properties" : {"name": name}})
         del feature['id']
-        del feature['geometry']
+        del feature['rank']
 
 
-def main():
+def main(simple_output: bool):
     global tif_path
     global json_path
     tif_path = find_file(['.tif', 'tiff'])
@@ -73,15 +87,17 @@ def main():
         data = json.load(f)
         progress = 1  # For progress indicator
         for feature in data['features']:
-            print("Getting tilecounts: %s of %s" % (progress, str(len(data["features"]))))
+            print("Getting tile counts: %s of %s" % (progress, str(len(data["features"]))))
+
             value = val_at_coord(feature['geometry']['coordinates'])
-            feature.update({"tile count": value})
+            feature.update({"tile_count": value})
             progress += 1
 
         # Sort features by tilecount, highest first
         print("Sorting dataset...")
-        data['features'] = sorted(data['features'], key=lambda x: x['tile count'])
+        data['features'] = sorted(data['features'], key=lambda x: float(x['tile_count']), reverse=True)
 
+        # Rank tile counts by giving each feature a ranking number (1 being the highest viewed feature)
         print("Ranking tile counts...")
         progress = 1
         for feature in data['features']:
@@ -89,7 +105,8 @@ def main():
             progress += 1
 
         # Remove some data to make output json cleaner
-        reduce_content(data)
+        if simple_output:
+            reduce_content(data)
 
         # Clear old data and save data to file
         f.seek(0)
@@ -100,4 +117,5 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    simple_mode = False
+    main(simple_mode)
