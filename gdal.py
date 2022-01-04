@@ -49,6 +49,15 @@ def find_file(extensions):
             print("File %s does not exist" % found_file)
             exit()
 
+def reduce_content(data):
+    for feature in data['features']:
+        name = feature['properties']['name']
+        feature.update({"name": name})
+        del feature['properties']
+        del feature['type']
+        del feature['id']
+        del feature['geometry']
+
 
 def main():
     global tif_path
@@ -78,6 +87,9 @@ def main():
         for feature in data['features']:
             feature.update({"rank": progress})
             progress += 1
+
+        # Remove some data to make output json cleaner
+        reduce_content(data)
 
         # Clear old data and save data to file
         f.seek(0)
