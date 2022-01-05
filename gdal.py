@@ -67,10 +67,11 @@ def calculate_coordinates(feature):
 def reduce_content(data):
     for feature in data['features']:
         name = feature['properties']['name']
+        tile_count = feature['properties']['tile_count']
         del feature['properties']
-        feature.update({"properties" : {"name": name}})
+        feature.update({"properties": {"name": name}})
+        feature['properties'].update({"tile_count": tile_count})
         del feature['id']
-        del feature['rank']
 
 
 def main(simple_output: bool):
@@ -79,43 +80,40 @@ def main(simple_output: bool):
     tif_path = find_file(['.tif', 'tiff'])
     json_path = find_file(['.geojson'])
 
-    # Copy the geojson as to not edit the original data
-    shutil.copy(json_path, output_path)
-
-    # Open the copied geoJson file
-    with open(output_path, "r+", encoding='utf-8') as f:
+    # Load data from the geoJson file
+    with open(json_path, "r+", encoding='utf-8') as f:
         data = json.load(f)
-        progress = 1  # For progress indicator
-        for feature in data['features']:
-            print("Getting tile counts: %s of %s" % (progress, str(len(data["features"]))))
 
-            value = val_at_coord(feature['geometry']['coordinates'])
-            feature.update({"tile_count": value})
-            progress += 1
+    progress = 1  # For progress indicator
+    for feature in data['features']:
+        print("Getting tile counts: %s of %s" % (progress, str(len(data["features"]))))
 
-        # Sort features by tilecount, highest first
-        print("Sorting dataset...")
-        data['features'] = sorted(data['features'], key=lambda x: float(x['tile_count']), reverse=True)
+        value = val_at_coord(feature['geometry']['coordinates'])
+        feature['properties'].update({"tile_count": value})
+        progress += 1
 
-        # Rank tile counts by giving each feature a ranking number (1 being the highest viewed feature)
-        print("Ranking tile counts...")
-        progress = 1
-        for feature in data['features']:
-            feature.update({"rank": progress})
-            progress += 1
+    # Sort features by tilecount, highest first
+    print("Sorting dataset...")
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
 
-        # Remove some data to make output json cleaner
-        if simple_output:
-            reduce_content(data)
+    # Rank tile counts by giving each feature a ranking number (1 being the highest viewed feature)
+    print("Ranking tile counts...")
+    progress = 1
+    for feature in data['features']:
+        feature['properties'].update({"rank": progress})
+        progress += 1
 
-        # Clear old data and save data to file
-        f.seek(0)
-        f.truncate()
+    # Remove some data to make output json cleaner
+    if simple_output:
+        reduce_content(data)
+
+    # Create new file or truncate already existing one and dump json data
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
 
     print("Done. \n")
 
 
 if __name__ == '__main__':
-    simple_mode = False
+    simple_mode = True
     main(simple_mode)
