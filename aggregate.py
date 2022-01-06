@@ -63,13 +63,17 @@ def calculate_coordinates(feature):
         exit()
 
 
-# outputs a minimalist version of the json, only containing name, coordinates and tilecount
+# outputs a minimalist version of the json, only containing name, coordinates and tile count
 def reduce_content(data):
+    name = ""
     for feature in data['features']:
-        name = feature['properties']['name']
+        if 'name' in feature['properties']:
+            name = feature['properties']['name']
         tile_count = feature['properties']['tile_count']
         del feature['properties']
-        feature.update({"properties": {"name": name}})
+        feature.update({"properties": {}})
+        if name != "":
+            feature['properties'].update({"name": name})
         feature['properties'].update({"tile_count": tile_count})
         del feature['id']
 
@@ -92,7 +96,7 @@ def main(simple_output: bool):
         feature['properties'].update({"tile_count": value})
         progress += 1
 
-    # Sort features by tilecount, highest first
+    # Sort features by tile count, the highest first
     print("Sorting dataset...")
     data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
 
@@ -115,5 +119,5 @@ def main(simple_output: bool):
 
 
 if __name__ == '__main__':
-    simple_mode = True
-    main(simple_mode)
+    reduce_content = True  # Reduces properties in output geojson
+    main(reduce_content)
