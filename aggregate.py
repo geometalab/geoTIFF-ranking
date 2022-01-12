@@ -6,7 +6,7 @@ from os.path import exists
 
 tif_path = None
 json_path = None
-output_path = "output.geojson"
+output_path = "output-tile-logs.geojson"
 
 
 def val_at_coord(coordinates):
@@ -78,7 +78,7 @@ def reduce_content(data):
         del feature['id']
 
 
-def main(simple_output: bool):
+def main(reduce):
     global tif_path
     global json_path
     tif_path = find_file(['.tif', 'tiff'])
@@ -108,7 +108,7 @@ def main(simple_output: bool):
         progress += 1
 
     # Remove some data to make output json cleaner
-    if simple_output:
+    if reduce:
         reduce_content(data)
 
     # Create new file or truncate already existing one and dump json data
@@ -119,5 +119,5 @@ def main(simple_output: bool):
 
 
 if __name__ == '__main__':
-    reduce_content = True  # Reduces properties in output geojson
-    main(reduce_content)
+    simple_content = True  # Reduces properties in output geojson
+    main(simple_content)
