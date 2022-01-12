@@ -69,11 +69,15 @@ def reduce_content(data):
     for feature in data['features']:
         if 'name' in feature['properties']:
             name = feature['properties']['name']
+        if 'wikidata' in feature['properties']:
+            wikidata = feature['properties']['wikidata']
         tile_count = feature['properties']['tile_count']
         del feature['properties']
         feature.update({"properties": {}})
         if name != "":
             feature['properties'].update({"name": name})
+        if wikidata != "":
+            feature['properties'].update({"wikidata": wikidata})
         feature['properties'].update({"tile_count": tile_count})
         del feature['id']
 
