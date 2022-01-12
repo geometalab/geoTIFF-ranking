@@ -24,7 +24,7 @@ def find_file():
         print("Found no geojson file.")
         exit()
 
-    if len(file_list) > 2:
+    if len(file_list) > 1:
         print("Found more than one .geojson file, please specify which file to use:")
         geojson_file = input("Enter file name: ")
 
