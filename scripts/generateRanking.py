@@ -14,7 +14,7 @@ import pandas as pd
 def find_file():
     output_path_qrank = "output-qrank.geojson"
     output_path_osm_synced = "output-tile-logs-synced.geojson"
-    qrank_file = "qrank.csv"
+    qrank_file = "../qrank.csv"
     geojson_file = ""
 
     if not exists(qrank_file):
