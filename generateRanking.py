@@ -3,10 +3,17 @@ import json
 import os
 from os.path import exists
 
+# For data visualisation
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 
 # Find the csv and the geojson file
 def find_file():
-    output_file = "output-qrank.geojson"
+    output_path_qrank = "output-qrank.geojson"
+    output_path_osm_synced = "output-tile-logs-synced.geojson"
     qrank_file = "qrank.csv"
     geojson_file = ""
 
@@ -31,7 +38,7 @@ def find_file():
     if len(file_list) == 1:
         geojson_file = file_list[0]
 
-    return qrank_file, geojson_file, output_file
+    return qrank_file, geojson_file, output_path_qrank, output_path_osm_synced
 
 
 def get_qrank(wikidata_tag, rows):
@@ -42,6 +49,7 @@ def get_qrank(wikidata_tag, rows):
     # If tag is not found, we return 0
     return 0
 
+
 # Filter out all features which do not include a wikidata property
 def filter_unusable_features(data):
     len_before = len(data['features'])
@@ -50,9 +58,23 @@ def filter_unusable_features(data):
     num_unusable_features = len_before - len_after
     return data, num_unusable_features
 
+# Distribution of OSM Features with a Wikidata Tag in comparison to all OSM Features, ranked by OSM Tile Logs
+def create_visualisation(data):
+    arr = []
+    for x in range(0, len(data['features'])):
+        if "wikidata" in data['features'][x]['properties']:
+            arr.append(x)
+
+    x = np.array(arr)
+    n, bins, patches = plt.hist(x, bins=200)
+    plt.xlabel("Ranking positions by OSM Tile logs rank")
+    plt.ylabel("Number of OSM Features with a Wikidata Tag")
+    plt.title("Distribution of Features with a wikidata tag")
+    plt.show()
+
 
 def generate_ranking_from_geojson():
-    qrank_file, geojson_file, output_file = find_file()
+    qrank_file, geojson_file, output_path_qrank, output_path_osm_synced = find_file()
 
     qrank_rows = []
 
@@ -69,6 +91,8 @@ def generate_ranking_from_geojson():
     with open(geojson_file, "r", encoding='utf-8') as f:
         data = json.load(f)
 
+    create_visualisation(data)
+
     data, num_of_missing_wikidata_tag = filter_unusable_features(data)
 
     print("Adding qrank property to data.")
@@ -80,13 +104,21 @@ def generate_ranking_from_geojson():
         wikidata_tag = feature['properties']['wikidata']
         feature['properties'].update({"qrank": get_qrank(wikidata_tag, qrank_rows)})
 
-    # Sort by qrank
-    print("Sorting and saving data to %s." % output_file)
-    data['features'] = sorted(data['features'], key=lambda x: int(x['properties']['qrank']), reverse=True)
+    qrank_order_data = data
+    osm_order_data = data
 
-    # Create new file or truncate already existing one and dump json data
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=4, ensure_ascii=False)
+    # Create new file or truncate already existing one and dump osm data
+    with open(output_path_osm_synced, "w", encoding="utf-8") as f:
+        json.dump(osm_order_data, f, indent=4, ensure_ascii=False)
+
+    # Sort by qrank
+    print("Sorting and saving data to %s." % output_path_qrank)
+    qrank_order_data['features'] = sorted(qrank_order_data['features'], key=lambda x: int(x['properties']['qrank']),
+                                          reverse=True)
+
+    # Create new file or truncate already existing one and dump qrank data
+    with open(output_path_qrank, "w", encoding="utf-8") as f:
+        json.dump(qrank_order_data, f, indent=4, ensure_ascii=False)
     print("%s of the features did not contain a wikidata tag." % num_of_missing_wikidata_tag)
     print("%s features have been ranked" % (len(data['features'])))
     print("Done.")
