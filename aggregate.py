@@ -105,13 +105,6 @@ def main(reduce):
     print("Sorting dataset...")
     data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
 
-    # Rank tile counts by giving each feature a ranking number (1 being the highest viewed feature)
-    print("Ranking tile counts...")
-    progress = 1
-    for feature in data['features']:
-        feature['properties'].update({"rank": progress})
-        progress += 1
-
     # Remove some data to make output json cleaner
     if reduce:
         reduce_content(data)
@@ -124,5 +117,5 @@ def main(reduce):
 
 
 if __name__ == '__main__':
-    simple_content = True  # Reduces properties in output geojson
+    simple_content = False  # Reduces properties in output geojson
     main(simple_content)
