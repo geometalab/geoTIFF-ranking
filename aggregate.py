@@ -66,6 +66,7 @@ def calculate_coordinates(feature):
 # outputs a minimalist version of the json, only containing name, coordinates and tile count
 def reduce_content(data):
     name = ""
+    wikidata = ""
     for feature in data['features']:
         if 'name' in feature['properties']:
             name = feature['properties']['name']
