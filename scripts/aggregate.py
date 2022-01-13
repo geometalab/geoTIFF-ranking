@@ -1,7 +1,6 @@
 import os
 import subprocess
 import json
-import shutil
 from os.path import exists
 
 tif_path = None
@@ -73,8 +72,10 @@ def reduce_content(data):
         if 'wikidata' in feature['properties']:
             wikidata = feature['properties']['wikidata']
         tile_count = feature['properties']['tile_count']
+        id = feature['properties']['@id']
         del feature['properties']
         feature.update({"properties": {}})
+        feature['properties'].update({"@id": id})
         if name != "":
             feature['properties'].update({"name": name})
         if wikidata != "":
@@ -117,5 +118,5 @@ def main(reduce):
 
 
 if __name__ == '__main__':
-    simple_content = False  # Reduces properties in output geojson
+    simple_content = True  # Reduces properties in output geojson
     main(simple_content)
