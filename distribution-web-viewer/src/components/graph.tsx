@@ -4,12 +4,27 @@ import CanvasJSReact from "../canvasJS/canvasjs.react";
 class Graph extends React.Component<any, any> {
     CanvasJS: any;
     CanvasJSChart: any;
+    chart: any;
 
     constructor(props: any) {
         super(props);
         this.generateDataSeries(props.content)
         this.CanvasJS = CanvasJSReact.CanvasJS;
+        this.CanvasJS.addColorSet("colorSet",
+            [
+                "#009FB7",
+                "#0A369D",
+                "#59FFA0",
+                "#688B58",
+                "#FED766",
+            ]);
         this.CanvasJSChart = CanvasJSReact.CanvasJSChart;
+        this.toggleDataSeries = this.toggleDataSeries.bind(this);
+    }
+
+    toggleDataSeries(e: any){
+        e.dataSeries.visible = !(typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible);
+        this.chart.render();
     }
 
     generateGraphData () {
@@ -19,7 +34,7 @@ class Graph extends React.Component<any, any> {
                 type: "spline",
                 name: this.props.titles[i],
                 showInLegend: true,
-                dataPoints: this.generateDataSeries(this.props.content[i])
+                dataPoints: this.generateDataSeries(this.props.content[i]),
             })
         }
         return data;
@@ -38,21 +53,25 @@ class Graph extends React.Component<any, any> {
 
     render() {
         const options = {
-            theme: "dark2",
             animationEnabled: true,
+            exportEnabled: true,
             zoomEnabled: true,
-            title:{
-                text: "TODO"
-            },
+            height: 600,
+            backgroundColor: "#272727",
+            colorSet: "colorSet",
             axisX: {
-                title: "Rank"
+                title: "Rank",
+                titleFontColor: "#EFF1F3",
+                lineColor: "#EFF1F3",
+                labelFontColor: "#EFF1F3",
+                tickColor: "#EFF1F3",
             },
             axisY: { // TODO make second axis
-                title: "Number of Views",
-                titleFontColor: "#6D78AD",
-                lineColor: "#6D78AD",
-                labelFontColor: "#6D78AD",
-                tickColor: "#6D78AD",
+                title: "Number of Views (log)",
+                titleFontColor: "#EFF1F3",
+                lineColor: "#EFF1F3",
+                labelFontColor: "#EFF1F3",
+                tickColor: "#EFF1F3",
                 logarithmic: true
             },
             toolTip: {
@@ -60,6 +79,7 @@ class Graph extends React.Component<any, any> {
             },
             legend: {
                 cursor: "pointer",
+                fontColor: "#EFF1F3",
             },
             data: this.generateGraphData()
         }
@@ -67,7 +87,7 @@ class Graph extends React.Component<any, any> {
 
         return (
             <div className={"Graph"}>
-                <this.CanvasJSChart options = {options}/>
+                <this.CanvasJSChart options = {options} onRef={(ref: any) => this.chart = ref}/>
             </div>
         );
     }
