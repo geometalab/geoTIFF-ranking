@@ -4,21 +4,25 @@ import CanvasJSReact from "../canvasJS/canvasjs.react";
 class Graph extends React.Component<any, any> {
     CanvasJS: any;
     CanvasJSChart: any;
-    chart: any;
-    jsonString = this.props.content;
-    dataSequences: any = [];
 
     constructor(props: any) {
         super(props);
-        this.generateDataSeries(this.jsonString)
+        this.generateDataSeries(props.content)
         this.CanvasJS = CanvasJSReact.CanvasJS;
         this.CanvasJSChart = CanvasJSReact.CanvasJSChart;
-        this.toggleDataSeries = this.toggleDataSeries.bind(this);
     }
 
-    toggleDataSeries(e: any){
-        e.dataSeries.visible = !(typeof (e.dataSeries.visible) === "undefined" || e.dataSeries.visible);
-        this.chart.render();
+    generateGraphData () {
+        let data = [];
+        for (let i = 0; i < this.props.content.length; i++) {
+            data.push({
+                type: "spline",
+                name: this.props.titles[i],
+                showInLegend: true,
+                dataPoints: this.generateDataSeries(this.props.content[i])
+            })
+        }
+        return data;
     }
 
     generateDataSeries(jsonContent: any) {
@@ -29,10 +33,7 @@ class Graph extends React.Component<any, any> {
             let data = { x: element[1], y: element[2], label: element[0]}
             dataSequence.push(data)
         }
-        this.dataSequences.push(dataSequence)
-
-
-
+        return dataSequence
     }
 
     render() {
@@ -43,9 +44,6 @@ class Graph extends React.Component<any, any> {
             title:{
                 text: "TODO"
             },
-            subtitles: [{
-                text: "Click Legend to Hide or Unhide Data Series"
-            }],
             axisX: {
                 title: "Rank"
             },
@@ -62,25 +60,14 @@ class Graph extends React.Component<any, any> {
             },
             legend: {
                 cursor: "pointer",
-                itemclick: this.toggleDataSeries
             },
-            data: [
-                {
-                    type: "spline",
-                    name: "Units Sold", // TODO display file name
-                    showInLegend: true,
-                    dataPoints: this.dataSequences[0]
-                },
-            ]
+            data: this.generateGraphData()
         }
 
 
         return (
             <div className={"Graph"}>
-                <this.CanvasJSChart options = {options}
-
-                />
-                {}
+                <this.CanvasJSChart options = {options}/>
             </div>
         );
     }

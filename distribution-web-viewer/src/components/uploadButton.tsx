@@ -6,19 +6,16 @@ class UploadButton extends React.Component<any, any>{
         this.loadFile = this.loadFile.bind(this);
     }
 
-    passToParent = (value: string | ArrayBuffer | null) => {
-        this.props.parentCallback(value);
+    passToParent = (value: string | ArrayBuffer | null, name: string) => {
+        this.props.parentCallback(value, name);
     }
 
     resetForm () {
         window.location.reload();
     }
 
-
     loadFile(event: any) {
         let file = event.target.files[0];
-        console.log(file);
-
         if (file) {
             let data = new FormData();
             data.append('file', file);
@@ -26,7 +23,7 @@ class UploadButton extends React.Component<any, any>{
             fileReader.readAsText(file);
             fileReader.onload = () => {
                 if(fileReader.readyState === 2) {
-                    this.passToParent(fileReader.result)
+                    this.passToParent(fileReader.result, file.name)
                 } else {
                     console.error("Error while loading the file.")
                 }

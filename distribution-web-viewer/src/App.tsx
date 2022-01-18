@@ -7,31 +7,31 @@ import Graph from "./components/graph"
 
 class App extends React.Component<any, any>{
 
-    handleCallback = (childData: any) => {
-        this.setState({fileContent: this.state.fileContent.concat(childData)})
+    handleCallback = (childData: any, childName: any) => {
+        this.setState({
+            fileNames: this.state.fileNames.concat(childName),
+            fileContents: this.state.fileContents.concat(childData)
+        })
     }
 
 
   state = {
     fileNames: [],
-    fileContent: [],
+    fileContents: [],
   }
 
   render() {
-    let mainContent: any;
-    if(this.state.fileContent.length === 0) {
-        mainContent = <p>No file selected</p>
+    let graph: any;
+    if(this.state.fileContents.length === 0) {
+        graph = <p>No file selected</p>
     } else {
-        mainContent = <div>
-            <Graph content={this.state.fileContent}/>
-            <PreviewWindow content={this.state.fileContent} titles={this.state.fileContent}/>
-        </div>
+        graph = <Graph content={this.state.fileContents} titles={this.state.fileNames}/>
     }
 
     return (
         <div className={"App"}>
-            <UploadButton parentCallback = {this.handleCallback} fileContent={this.state.fileContent} />
-            {mainContent}
+            <UploadButton parentCallback = {this.handleCallback} content={this.state.fileContents} titles={this.state.fileNames} />
+            {graph}
         </div>
 
     );
