@@ -1,24 +1,37 @@
-import React, {useState} from 'react';
+import React from 'react';
 import "./App.css"
-import "./components/uploadButton";
 import PreviewWindow from "./components/previewWindow";
 import UploadButton from "./components/uploadButton";
+import Graph from "./components/graph"
+
 
 class App extends React.Component<any, any>{
 
-  state = {
-    fileContent: "",
-  }
+    handleCallback = (childData: any) => {
+        this.setState({fileContent: this.state.fileContent.concat(childData)})
+    }
 
-  handleCallback = (childData: any) =>{
-    this.setState({fileContent: childData})
+
+  state = {
+    fileNames: [],
+    fileContent: [],
   }
 
   render() {
+    let mainContent: any;
+    if(this.state.fileContent.length === 0) {
+        mainContent = <p>No file selected</p>
+    } else {
+        mainContent = <div>
+            <Graph content={this.state.fileContent}/>
+            <PreviewWindow content={this.state.fileContent} titles={this.state.fileContent}/>
+        </div>
+    }
+
     return (
         <div className={"App"}>
-            <UploadButton parentCallback = {this.handleCallback} />
-            <PreviewWindow content={this.state.fileContent} />
+            <UploadButton parentCallback = {this.handleCallback} fileContent={this.state.fileContent} />
+            {mainContent}
         </div>
 
     );

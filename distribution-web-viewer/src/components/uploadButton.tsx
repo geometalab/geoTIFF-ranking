@@ -10,6 +10,11 @@ class UploadButton extends React.Component<any, any>{
         this.props.parentCallback(value);
     }
 
+    resetForm () {
+        window.location.reload();
+    }
+
+
     loadFile(event: any) {
         let file = event.target.files[0];
         console.log(file);
@@ -21,7 +26,6 @@ class UploadButton extends React.Component<any, any>{
             fileReader.readAsText(file);
             fileReader.onload = () => {
                 if(fileReader.readyState === 2) {
-                    console.log(fileReader.result)
                     this.passToParent(fileReader.result)
                 } else {
                     console.error("Error while loading the file.")
@@ -32,14 +36,26 @@ class UploadButton extends React.Component<any, any>{
     }
 
     render() {
+        let button;
+        if(this.props.fileContent !== "") {
+            button = <button type={"reset"}
+                             onClick={this.resetForm}
+                             className={"button"}
+            >Reset</button>
+        }
         return <div className="App">
             <header className="App-header">
                 <h1>Distribution Viewer</h1>
                 <form>
-                    <input type="file"
-                           name="myFile"
-                           onChange={this.loadFile}
-                    />
+                    <label className="button">
+                        <input type="file"
+                               name="myFile"
+                               onChange={this.loadFile}
+                               className={"button"}
+                        />
+                        Upload a file
+                    </label>
+                    {button}
                 </form>
             </header>
         </div>
