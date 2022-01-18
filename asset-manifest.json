@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/css/main.a9796d94.css",
+    "main.js": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/js/main.503f1278.js",
+    "static/js/787.f4e50974.chunk.js": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/js/787.f4e50974.chunk.js",
+    "index.html": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/index.html",
+    "main.a9796d94.css.map": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/css/main.a9796d94.css.map",
+    "main.503f1278.js.map": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/js/main.503f1278.js.map",
+    "787.f4e50974.chunk.js.map": "/geometalab/geoTIFF-ranking/tree/main/distribution-web-viewer/static/js/787.f4e50974.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a9796d94.css",
+    "static/js/main.503f1278.js"
+  ]
+}
