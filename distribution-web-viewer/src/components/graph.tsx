@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import CanvasJSReact from "../canvasJS/canvasjs.react";
 
 class Graph extends React.Component<any, any> {
@@ -12,11 +12,11 @@ class Graph extends React.Component<any, any> {
         this.CanvasJS = CanvasJSReact.CanvasJS;
         this.CanvasJS.addColorSet("colorSet",
             [
-                "#009FB7",
-                "#0A369D",
-                "#59FFA0",
-                "#688B58",
-                "#FED766",
+                "#D81B60",
+                "#1E88E5",
+                "#FFC107",
+                "#004D40",
+                "#ff6f46",
             ]);
         this.CanvasJSChart = CanvasJSReact.CanvasJSChart;
         this.toggleDataSeries = this.toggleDataSeries.bind(this);
@@ -27,24 +27,58 @@ class Graph extends React.Component<any, any> {
         this.chart.render();
     }
 
+    onClick (e: any) {
+        window.open("https://www.wikidata.org/wiki/" + e.dataPoint.label, "_blank")
+    }
+
     generateGraphData () {
         let data = [];
         for (let i = 0; i < this.props.content.length; i++) {
             data.push({
                 type: "spline",
+                click: this.onClick,
+                toolTipContent: "Rank: {x}, Views: {y}, " +
+                    "<a rel='noreferrer' href='https://www.wikidata.org/wiki/{label}'>{label}</a>",
                 name: this.props.titles[i],
-                showInLegend: true,
                 dataPoints: this.generateDataSeries(this.props.content[i]),
             })
         }
         return data;
     }
 
+    getCustomArrayKey = (jsonObject: any) => {
+        let arrayKey;
+        arrayKey = prompt("Could not find array of objects in json. Please enter the key which contains the array to analyze.") ?? "";
+        console.log(arrayKey)
+        if(!(arrayKey in jsonObject)) {
+            console.error("Could not find any matching keys")
+        }
+        return arrayKey;
+    }
+
     generateDataSeries(jsonContent: any) {
         const jsonObject = JSON.parse(jsonContent);
+
+        let arrayKey = ""
+        let possibleKeys = [
+            "samples",
+            "Samples",
+            "features",
+            "Features"
+        ]
+        for (let i in possibleKeys) {
+            if (possibleKeys[i] in jsonObject) {
+                arrayKey = possibleKeys[i];
+            }
+        }
+
+        if(arrayKey === "") {
+            arrayKey = this.getCustomArrayKey(jsonObject)
+        }
+
         let dataSequence = []
-        for(let i in jsonObject['Samples']) {
-            let element = jsonObject['Samples'][i]
+        for(let i in jsonObject[arrayKey]) {
+            let element = jsonObject[arrayKey][i]
             let data = { x: element[1], y: element[2], label: element[0]}
             dataSequence.push(data)
         }
@@ -73,9 +107,6 @@ class Graph extends React.Component<any, any> {
                 labelFontColor: "#EFF1F3",
                 tickColor: "#EFF1F3",
                 logarithmic: true
-            },
-            toolTip: {
-                toolTipContent: "{label}, Rank: {x}, Views: {y} "
             },
             legend: {
                 cursor: "pointer",
