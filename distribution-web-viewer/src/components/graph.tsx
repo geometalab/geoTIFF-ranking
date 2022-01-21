@@ -8,7 +8,6 @@ class Graph extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.generateDataSeries(props.content)
         this.CanvasJS = CanvasJSReact.CanvasJS;
         this.CanvasJS.addColorSet("colorSet",
             [
@@ -33,53 +32,24 @@ class Graph extends React.Component<any, any> {
 
     generateGraphData () {
         let data = [];
-        for (let i = 0; i < this.props.content.length; i++) {
+        for (let i = 0; i < this.props.state.fileContents.length; i++) {
             data.push({
                 type: "spline",
                 click: this.onClick,
-                toolTipContent: "Rank: {x}, Views: {y}, " +
-                    "<a rel='noreferrer' href='https://www.wikidata.org/wiki/{label}'>{label}</a>",
-                name: this.props.titles[i],
-                dataPoints: this.generateDataSeries(this.props.content[i]),
+                toolTipContent: "{label}, Rank: {x}, Views: {y}",
+                name: this.props.state.fileNames[i],
+                dataPoints: this.generateDataSeries(i),
             })
         }
         return data;
     }
 
-    getCustomArrayKey = (jsonObject: any) => {
-        let arrayKey;
-        arrayKey = prompt("Could not find array of objects in json. Please enter the key which contains the array to analyze.") ?? "";
-        console.log(arrayKey)
-        if(!(arrayKey in jsonObject)) {
-            console.error("Could not find any matching keys")
-        }
-        return arrayKey;
-    }
-
-    generateDataSeries(jsonContent: any) {
-        const jsonObject = JSON.parse(jsonContent);
-
-        let arrayKey = ""
-        let possibleKeys = [
-            "samples",
-            "Samples",
-            "features",
-            "Features"
-        ]
-        for (let i in possibleKeys) {
-            if (possibleKeys[i] in jsonObject) {
-                arrayKey = possibleKeys[i];
-            }
-        }
-
-        if(arrayKey === "") {
-            arrayKey = this.getCustomArrayKey(jsonObject)
-        }
-
+    generateDataSeries(i: any) {
+        const jsonObject = JSON.parse(this.props.state.fileContents[i]);
         let dataSequence = []
-        for(let i in jsonObject[arrayKey]) {
-            let element = jsonObject[arrayKey][i]
-            let data = { x: element[1], y: element[2], label: element[0]}
+        for(let y in jsonObject[this.props.state.contentKeys]) {
+            let element = jsonObject[this.props.state.contentKeys[i]][y]
+            let data = { x: element[this.props.state.selectedKeyRank], y: element[this.props.state.selectedKeyViews], label: element[this.props.state.selectedKeyLabel]}
             dataSequence.push(data)
         }
         return dataSequence
