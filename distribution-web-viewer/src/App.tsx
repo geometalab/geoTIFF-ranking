@@ -5,6 +5,7 @@ import UploadButton from "./components/uploadButton";
 import Graph from "./components/graph"
 import KeyDropdown from "./components/dropdown";
 import Dropdown from "./components/dropdown";
+import Chart from "./components/Chart";
 
 
 class App extends React.Component<any, any>{
@@ -27,7 +28,7 @@ class App extends React.Component<any, any>{
         fileNames: [],
         fileContents: [],
         selectedKey: 0,
-        importMode: Array,
+        importMode: "Array",
   }
 
   render() {
@@ -35,8 +36,8 @@ class App extends React.Component<any, any>{
     if(this.state.fileContents.length === 0) {
         graph = <p>No file selected</p>
     } else {
-        graph = <div>
-            <Graph content={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importMode}/>
+        graph = <div className={"Graph"}>
+            <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importMode}/>
         </div>
     }
 

@@ -9,7 +9,6 @@ class KeyDropdown extends React.Component<any, any> {
     }
 
     passToParent = (e: any) => {
-        console.log(e)
         this.props.parentCallback(e.value);
     }
 
