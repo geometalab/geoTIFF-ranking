@@ -8,7 +8,6 @@ class Graph extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.generateDataSeries(props.content)
         this.CanvasJS = CanvasJSReact.CanvasJS;
         this.CanvasJS.addColorSet("colorSet",
             [
@@ -28,7 +27,15 @@ class Graph extends React.Component<any, any> {
     }
 
     onClick (e: any) {
-        window.open("https://www.wikidata.org/wiki/" + e.dataPoint.label, "_blank")
+        this.urlLauncher(e.datapoint.label)
+    }
+
+    urlLauncher(label: string) {
+        if(label.startsWith("Q")) {
+            window.open("https://www.wikidata.org/wiki/" + label, "_blank")
+        } else {
+            window.open("https://www.openstreetmap.org/" + label, "_blank")
+        }
     }
 
     generateGraphData () {
@@ -79,7 +86,18 @@ class Graph extends React.Component<any, any> {
         let dataSequence = []
         for(let i in jsonObject[arrayKey]) {
             let element = jsonObject[arrayKey][i]
-            let data = { x: element[1], y: element[2], label: element[0]}
+            let data
+            switch (this.props.importMode) {
+                case 'Array':
+                    data = { x: element[1], y: element[2], label: element[0]}
+                    break
+                case 'QRank':
+                    data = { x: element['properties']['qrank_rank'], y: Number.parseInt(element['properties']['qrank']), label: element['properties']['wikidata']}
+                    break
+                case 'OSM':
+                    data = { x: element['properties']['osm_views_rank'], y: Number.parseInt(element['properties']['tile_count']), label: element['properties']['@id']}
+                    break
+            }
             dataSequence.push(data)
         }
         return dataSequence
@@ -100,7 +118,7 @@ class Graph extends React.Component<any, any> {
                 labelFontColor: "#EFF1F3",
                 tickColor: "#EFF1F3",
             },
-            axisY: { // TODO make second axis
+            axisY: {
                 title: "Number of Views (log)",
                 titleFontColor: "#EFF1F3",
                 lineColor: "#EFF1F3",

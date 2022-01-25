@@ -20,6 +20,12 @@ body {
   overflow-y: scroll;
 }
 
+.Dropdown {
+  margin: 16px;
+  justify-content: center;
+  display: flex;
+}
+
 .Graph {
   margin: 50px;
 }

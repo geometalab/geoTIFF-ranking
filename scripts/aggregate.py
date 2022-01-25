@@ -15,7 +15,7 @@ def val_at_coord(coordinates):
         raise Exception("Exception while executing gdallocationinfo: " + result.stderr)
     xml = result.stdout
     result = xml[xml.find('<Value>') + 7: xml.find('</Value>')]
-    return result
+    return float(result)
 
 
 # Finds the tif_path and json_path file and prompts user if multiple are found/aborts if none are found
@@ -118,5 +118,5 @@ def main(reduce):
 
 
 if __name__ == '__main__':
-    simple_content = True  # Reduces properties in output geojson
+    simple_content = False  # Reduces properties in output geojson
     main(simple_content)

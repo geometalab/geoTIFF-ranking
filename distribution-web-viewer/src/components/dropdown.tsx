@@ -4,18 +4,21 @@ import Dropdown from 'react-dropdown';
 
 class KeyDropdown extends React.Component<any, any> {
 
-    onSelect(e: any) {
-        console.log(e)
+    constructor(props: any) {
+        super(props);
     }
-    render() {
-        if(this.state.availableKeys.length === 0) {
-            return null;
-        } else {
-            return <div>
-                <Dropdown options={this.state.availableKeys} onChange={this.onSelect} value={this.state.selectedKey} placeholder="Select an option" />;
-            </div>
-        }
 
+    passToParent = (e: any) => {
+        console.log(e)
+        this.props.parentCallback(e.value);
+    }
+
+    render() {
+        let availableKeys = ["Array", "QRank", "OSM"]
+        let selectedKey = 0
+        return <div className={"Dropdown"}>
+            <Dropdown options={availableKeys} onChange={this.passToParent} value={availableKeys[selectedKey]} placeholder="Select an option" />
+        </div>
     }
 }
 

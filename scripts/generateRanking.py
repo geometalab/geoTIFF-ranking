@@ -40,7 +40,7 @@ def find_file():
 def get_qrank(wikidata_tag, rows):
     for row in rows:
         if row[0] == wikidata_tag:
-            return row[1]
+            return int(row[1])
 
     # If tag is not found, we return 0
     return 0
@@ -106,14 +106,14 @@ def generate_ranking_from_geojson():
         feature['properties'].update({"qrank": get_qrank(wikidata_tag, qrank_rows)})
 
     # Sort and Rank by Tile Views
-    data['features'] = sorted(data['features'], key=lambda x: int(x['properties']['tile_count']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
     rank = 0
     for feature in data['features']:
         rank += 1
         feature['properties'].update({"osm_views_rank": rank})
 
     # Sort and Rank by QRank
-    data['features'] = sorted(data['features'], key=lambda x: int(x['properties']['qrank']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['qrank']), reverse=True)
     rank = 0
     for feature in data['features']:
         rank += 1
@@ -121,16 +121,19 @@ def generate_ranking_from_geojson():
 
     qrank_ordered_data = data
 
+    # Save the qrank file
+    with open(output_path_qrank, "w", encoding="utf-8") as f:
+        json.dump(qrank_ordered_data, f, indent=4, ensure_ascii=False)
+
     # Sort by Tile Views again
-    data['features'] = sorted(data['features'], key=lambda x: int(x['properties']['tile_count']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
     osm_ordered_data = data
 
-    # Save the two files
+    # Save the osm file
     with open(output_path_osm_synced, "w", encoding="utf-8") as f:
         json.dump(osm_ordered_data, f, indent=4, ensure_ascii=False)
 
-    with open(output_path_qrank, "w", encoding="utf-8") as f:
-        json.dump(qrank_ordered_data, f, indent=4, ensure_ascii=False)
+
 
     # Print infos
     print("%s of the features did not contain a wikidata tag." % num_of_missing_wikidata_tag)

@@ -4,14 +4,21 @@ import PreviewWindow from "./components/previewWindow";
 import UploadButton from "./components/uploadButton";
 import Graph from "./components/graph"
 import KeyDropdown from "./components/dropdown";
+import Dropdown from "./components/dropdown";
 
 
 class App extends React.Component<any, any>{
 
-    handleCallback = (childData: any, childName: any) => {
+    handleFileCallback = (childData: any, childName: any) => {
         this.setState({
             fileNames: this.state.fileNames.concat(childName),
             fileContents: this.state.fileContents.concat(childData)
+        })
+    }
+
+    handleImportCallback = (importMode: any) => {
+        this.setState({
+            importMode: importMode
         })
     }
 
@@ -19,8 +26,8 @@ class App extends React.Component<any, any>{
   state = {
         fileNames: [],
         fileContents: [],
-        availableKeys: [],
-        selectedKey: 0
+        selectedKey: 0,
+        importMode: Array,
   }
 
   render() {
@@ -29,14 +36,14 @@ class App extends React.Component<any, any>{
         graph = <p>No file selected</p>
     } else {
         graph = <div>
-            <Graph content={this.state.fileContents} titles={this.state.fileNames}/>
-
+            <Graph content={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importMode}/>
         </div>
     }
 
     return (
         <div className={"App"}>
-            <UploadButton parentCallback = {this.handleCallback} content={this.state.fileContents} titles={this.state.fileNames} />
+            <UploadButton parentCallback = {this.handleFileCallback} content={this.state.fileContents} titles={this.state.fileNames} />
+            <Dropdown parentCallback = {this.handleImportCallback} />
             {graph}
         </div>
 
