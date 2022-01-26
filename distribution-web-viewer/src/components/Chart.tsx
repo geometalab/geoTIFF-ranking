@@ -6,12 +6,23 @@ class Chart extends React.Component<any, any> {
 
     layout: any = {
         xaxis: {
+            title: 'Rank',
             type: 'linear',
-            autorange: true
+            autorange: true,
+            automargin: true,
+            rangemode: "tozero",
         },
         yaxis: {
+            title: 'Views (log)',
             type: 'log',
-            autorange: true
+            autorange: true,
+            automargin: true,
+        },
+        showlegend: true,
+        legend: {
+            x: 1,
+            xanchor: 'right',
+            y: 1
         },
         width: 1200,
         height: 700,
@@ -22,13 +33,12 @@ class Chart extends React.Component<any, any> {
     generateGraph(): any {
         let data = []
         for (let i = 0; i < this.props.fileContent.length; i++) {
-            data.push(this.generateDataSeries(this.props.fileContent[i], this.props.importMode[i]))
+            data.push(this.generateDataSeries(this.props.fileContent[i], this.props.titles[i], this.props.importMode[i]))
         }
-        console.log(data)
         return data;
     }
 
-    generateDataSeries (jsonContent: any, importMode: string) {
+    generateDataSeries (jsonContent: any, fileName: string, importMode: string) {
         const jsonObject = JSON.parse(jsonContent);
 
         let arrayKey = ""
@@ -71,7 +81,8 @@ class Chart extends React.Component<any, any> {
         return {
             x: x,
             y: y,
-            type: "scatter"
+            type: "scatter",
+            name: fileName
         };
     }
 
