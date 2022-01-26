@@ -4,10 +4,6 @@ import Dropdown from 'react-dropdown';
 
 class KeyDropdown extends React.Component<any, any> {
 
-    constructor(props: any) {
-        super(props);
-    }
-
     passToParent = (e: any) => {
         this.props.parentCallback(e.value);
     }

@@ -1,6 +1,6 @@
 body {
-  background-color: #272727;
-  color: #EFF1F3;
+  color: #272727;
+  background-color: #EFF1F3;
 }
 
 .root {
@@ -27,7 +27,7 @@ body {
 }
 
 .Graph {
-  margin: 50px;
+  margin: 0px;
 }
 
 input[type="file"] {

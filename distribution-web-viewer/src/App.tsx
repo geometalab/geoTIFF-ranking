@@ -1,11 +1,9 @@
 import React from 'react';
 import "./App.css"
-import PreviewWindow from "./components/previewWindow";
 import UploadButton from "./components/uploadButton";
-import Graph from "./components/graph"
-import KeyDropdown from "./components/dropdown";
 import Dropdown from "./components/dropdown";
 import Chart from "./components/Chart";
+import update from 'react-addons-update';
 
 
 class App extends React.Component<any, any>{
@@ -18,9 +16,13 @@ class App extends React.Component<any, any>{
     }
 
     handleImportCallback = (importMode: any) => {
-        this.setState({
-            importMode: importMode
-        })
+        this.setState(update(this.state, {
+            importMode: {
+                [this.state.fileContents.length]: {
+                    $set: importMode
+                }
+            }
+        }))
     }
 
 
@@ -28,10 +30,25 @@ class App extends React.Component<any, any>{
         fileNames: [],
         fileContents: [],
         selectedKey: 0,
-        importMode: "Array",
+        importMode: ["Array"],
   }
 
   render() {
+    if(this.state.fileContents !== null) {
+        if(
+            this.state.fileContents.length !== this.state.fileNames.length || (
+                this.state.fileContents.length !== this.state.importMode.length &&
+                this.state.fileContents.length !== this.state.importMode.length -1
+            )
+        ) {
+            console.error("Not all state items are the same length: ")
+            console.error(this.state.fileContents)
+            console.error(this.state.fileNames)
+            console.error(this.state.importMode)
+        }
+    }
+
+
     let graph: any;
     if(this.state.fileContents.length === 0) {
         graph = <p>No file selected</p>
