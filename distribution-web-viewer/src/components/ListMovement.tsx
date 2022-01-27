@@ -128,9 +128,9 @@ class ListMovement extends React.Component<any, any> {
 
     generateLabelText(i: number, j: number) {
         // Should output the following string:
-        //  (qrank id or qtag) <br>
-        //  (file 1 import mode) rank: (rank) <br>
-        //  (file 2 import mode) rank: (rank) <br>
+        //  (qrank id or qtag)<br>
+        //  (file 1 import mode) Rank: (rank)<br>
+        //  (file 2 import mode) Rank: (rank)<br>
         let text = ""
         if(this.props.importMode[0] === "QRank") {
             text = this.json2[this.arrayKey2][j]['properties']['wikidata']
@@ -140,15 +140,29 @@ class ListMovement extends React.Component<any, any> {
         if(text === "") {
             text = "Import mode " + this.props.importMode[0]
         } else {
-            text += "<br>" + this.props.importMode[0] + " Rank:" + i +
-                    "<br>" + this.props.importMode[1] + " Rank:" + j
+            text += "<br>" + this.props.importMode[0] + " Rank: " + i +
+                    "<br>" + this.props.importMode[1] + " Rank: " + j
         }
         return text
     }
 
+    onClickHandler = (e: any) => {
+        let text: string = e.points[0].text
+        text = text.substring(0, text.indexOf("<"))
+        let link = ""
+        if(text.startsWith("Q")) {
+            link = "https://www.wikidata.org/wiki/"
+        } else if (text.startsWith("way/") || text.startsWith("node/") || text.startsWith("relation/")) {
+            link = "https://www.openstreetmap.org/"
+        }
+        if(link !== "") {
+            window.open(link + text, "_blank")
+        }
+    }
+
     render() {
         // @ts-ignore
-        return <Plot data={this.generateGraph()} layout={this.layout}/>
+        return <Plot data={this.generateGraph()} layout={this.layout} onClick={this.onClickHandler}/>
     }
 }
 
