@@ -19,7 +19,8 @@ class ListMovement extends React.Component<any, any> {
         plot_bgcolor: '#EFF1F3',
         title: "Deviations between the two Sets",
         xaxis: {
-            title: "Rank difference from " + this.props.titles[0] + " to " + this.props.titles[0]
+            title: "Rank difference from " + this.props.titles[0] + " to " + this.props.titles[0],
+            autorange: "reversed",
         },
         yaxis: {
             title: "Rank in " + this.props.titles[0],
@@ -56,7 +57,12 @@ class ListMovement extends React.Component<any, any> {
             let j = 0
             while(!found) {
                 if(this.json2[this.arrayKey2][j]['properties']['@id'] === id) {
-                    offsetArray.push(i-j)
+                    offsetArray.push({
+                        offset: i-j,
+                        rank0: i,
+                        rank1: j,
+                        text: this.generateLabelText(i,j),
+                    })
                     found = true
                 }
                 j++
@@ -71,7 +77,8 @@ class ListMovement extends React.Component<any, any> {
         for(let i in arrays) {
             traces.push(
                 {
-                    x: arrays[i],
+                    x: this.getCleanArray(arrays[i], "offset"),
+                    text: this.getCleanArray(arrays[i], "text"),
                     name: position + "-" + (position + arrays[i].length),
                     type: "box",
                     boxpoints: "all"
@@ -81,6 +88,15 @@ class ListMovement extends React.Component<any, any> {
         }
         return traces
     }
+
+    getCleanArray(array: any[], key: string) {
+        // Takes an array of objects, outputs an array only containing one key
+        let outputArray = []
+        for(let i in array) {
+               outputArray.push(array[i][key])
+        }
+        return outputArray
+}
 
     getArrayKey(jsonObject: any) {
         let arrayKey = ""
@@ -108,6 +124,26 @@ class ListMovement extends React.Component<any, any> {
             i = i + chunk + 1;
         }
         return outputArray
+    }
+
+    generateLabelText(i: number, j: number) {
+        // Should output the following string:
+        //  (qrank id or qtag) <br>
+        //  (file 1 import mode) rank: (rank) <br>
+        //  (file 2 import mode) rank: (rank) <br>
+        let text = ""
+        if(this.props.importMode[0] === "QRank") {
+            text = this.json2[this.arrayKey2][j]['properties']['wikidata']
+        } else if(this.props.importMode[0] === "OSM") {
+            text = this.json2[this.arrayKey2][j]['properties']['@id']
+        }
+        if(text === "") {
+            text = "Import mode " + this.props.importMode[0]
+        } else {
+            text += "<br>" + this.props.importMode[0] + " Rank:" + i +
+                    "<br>" + this.props.importMode[1] + " Rank:" + j
+        }
+        return text
     }
 
     render() {
