@@ -90,14 +90,16 @@ class Chart extends React.Component<any, any> {
     }
 
     onClickHandler = (e: any) => {
-        let text = e.points[0].text
+        let text: string = e.points[0].text
         let link = ""
         if(text.startsWith("Q")) {
             link = "https://www.wikidata.org/wiki/"
-        } else {
+        } else if (text.startsWith("way/") || text.startsWith("node/") || text.startsWith("relation/")) {
             link = "https://www.openstreetmap.org/"
         }
-        window.open(link + text, "_blank")
+        if(link !== "") {
+            window.open(link + text, "_blank")
+        }
     }
 
     render() {
