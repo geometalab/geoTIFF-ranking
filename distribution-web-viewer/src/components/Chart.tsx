@@ -57,23 +57,24 @@ class Chart extends React.Component<any, any> {
 
         let x = []
         let y = []
+        let text = []
         for(let i in jsonObject[arrayKey]) {
             let element = jsonObject[arrayKey][i]
             switch (importMode) {
                 case 'Array':
                     x.push(element[1])
                     y.push(element[2])
-                    // data = { x: element[1], y: element[2], label: element[0]}
+                    text.push(element[0])
                     break
                 case 'QRank':
                     x.push(element['properties']['qrank_rank'])
                     y.push(element['properties']['qrank'])
-                    // data = { x: element['properties']['qrank_rank'], y: Number.parseInt(element['properties']['qrank']), label: element['properties']['wikidata']}
+                    text.push(element['properties']['wikidata'])
                     break
                 case 'OSM':
                     x.push(element['properties']['osm_views_rank'])
                     y.push(element['properties']['tile_count'])
-                    // data = { x: element['properties']['osm_views_rank'], y: Number.parseInt(element['properties']['tile_count']), label: element['properties']['@id']}
+                    text.push(element['properties']['@id'])
                     break
                 default:
                     console.error("Fallthrough in switch.")
@@ -82,13 +83,25 @@ class Chart extends React.Component<any, any> {
         return {
             x: x,
             y: y,
+            text: text,
             type: "scatter",
             name: fileName
         };
     }
 
+    onClickHandler = (e: any) => {
+        let text = e.points[0].text
+        let link = ""
+        if(text.startsWith("Q")) {
+            link = "https://www.wikidata.org/wiki/"
+        } else {
+            link = "https://www.openstreetmap.org/"
+        }
+        window.open(link + text, "_blank")
+    }
+
     render() {
-        return <Plot data={this.generateGraph()} layout={this.layout}/>
+        return <Plot data={this.generateGraph()} layout={this.layout} onClick={this.onClickHandler}/>
     }
 
 }
