@@ -3,6 +3,7 @@ import "./App.css"
 import UploadButton from "./components/uploadButton";
 import Dropdown from "./components/dropdown";
 import Chart from "./components/Chart";
+import ListMovement from "./components/ListMovement";
 
 
 class App extends React.Component<any, any>{
@@ -50,9 +51,19 @@ class App extends React.Component<any, any>{
     let graph: any;
     if(this.state.fileContents?.length === 0) {
         graph = <p>No file selected</p>
-    } else {
+    } else if (this.state.fileContents?.length === 1) {
         graph = <div className={"Graph"}>
             <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+        </div>
+    } else {
+        graph = <div>
+            <div className={"Graph"}>
+                <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+            </div>
+            <div className={"Listmovement"}>
+                <ListMovement fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+            </div>
+
         </div>
     }
 

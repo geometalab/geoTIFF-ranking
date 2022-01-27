@@ -28,6 +28,7 @@ class Chart extends React.Component<any, any> {
         height: 700,
         paper_bgcolor: '#EFF1F3',
         plot_bgcolor: '#EFF1F3',
+        title: "Views vs Rank distribution",
     }
 
     generateGraph(): any {
