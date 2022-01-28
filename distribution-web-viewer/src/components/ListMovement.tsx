@@ -20,7 +20,6 @@ class ListMovement extends React.Component<any, any> {
         title: "Deviations between the two Sets",
         xaxis: {
             title: "Rank difference from " + this.props.titles[0] + " to " + this.props.titles[0],
-            autorange: "reversed",
         },
         yaxis: {
             title: "Rank in " + this.props.titles[0],
@@ -59,8 +58,6 @@ class ListMovement extends React.Component<any, any> {
                 if(this.json2[this.arrayKey2][j]['properties']['@id'] === id) {
                     offsetArray.push({
                         offset: i-j,
-                        rank0: i,
-                        rank1: j,
                         text: this.generateLabelText(i,j),
                     })
                     found = true
@@ -132,31 +129,38 @@ class ListMovement extends React.Component<any, any> {
         //  (file 1 import mode) Rank: (rank)<br>
         //  (file 2 import mode) Rank: (rank)<br>
         let text = ""
+        let counterPart = ""
         if(this.props.importMode[0] === "QRank") {
-            text = this.json2[this.arrayKey2][j]['properties']['wikidata']
+            text = this.json1[this.arrayKey1][i]['properties']['wikidata']
+            counterPart = this.json1[this.arrayKey1][i]['properties']['@id']
         } else if(this.props.importMode[0] === "OSM") {
             text = this.json2[this.arrayKey2][j]['properties']['@id']
+            counterPart = this.json1[this.arrayKey1][i]['properties']['wikidata']
         }
         if(text === "") {
             text = "Import mode " + this.props.importMode[0]
         } else {
-            text += "<br>" + this.props.importMode[0] + " Rank: " + i +
-                    "<br>" + this.props.importMode[1] + " Rank: " + j
+            text += "<br>" + this.props.importMode[0] + " Rank: " + (i + 1) +
+                    "<br>" + this.props.importMode[1] + " Rank: " + (j + 1) +
+                    "<br>" + "Counterpart: " + counterPart
         }
         return text
     }
 
     onClickHandler = (e: any) => {
         let text: string = e.points[0].text
-        text = text.substring(0, text.indexOf("<"))
-        let link = ""
-        if(text.startsWith("Q")) {
-            link = "https://www.wikidata.org/wiki/"
-        } else if (text.startsWith("way/") || text.startsWith("node/") || text.startsWith("relation/")) {
-            link = "https://www.openstreetmap.org/"
+        let subtext = text.substring(0, text.indexOf("<"))
+        this.launchLink(subtext)
+        if(text.includes("Counterpart: ")) {
+            this.launchLink(text.substring(text.indexOf("Counterpart: ") + 13))
         }
-        if(link !== "") {
-            window.open(link + text, "_blank")
+    }
+
+    launchLink (label: string) {
+        if(label.startsWith("Q")) {
+            window.open("https://www.wikidata.org/wiki/" + label, "_blank")
+        } else if (label.startsWith("way/") || label.startsWith("node/") || label.startsWith("relation/")) {
+            window.open("https://www.openstreetmap.org/" + label, "_blank")
         }
     }
 
