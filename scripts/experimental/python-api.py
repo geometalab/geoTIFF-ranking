@@ -2,7 +2,8 @@ import sys
 import textwrap
 
 from numbers import Real
-from osgeo import osr, gdal
+import gdal
+from osgeo import osr
 
 
 def val_at_coord(filename: str,
@@ -47,6 +48,7 @@ def val_at_coord(filename: str,
     return res
 
 
+
 if __name__ == '__main__':
-    path = "../osmviews.tif"
-    print(val_at_coord(path, 1, 1))
+    path = "C:/Users/zahne/Downloads/osmviews(1).tiff"
+    print(val_at_coord(path, 8.23, 47.15))
