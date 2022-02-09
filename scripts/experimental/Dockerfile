@@ -16,4 +16,4 @@ RUN pip install GDAL
 RUN pip install geojson
 
 WORKDIR /usr/src/app
-COPY . .
+COPY ../.. .
