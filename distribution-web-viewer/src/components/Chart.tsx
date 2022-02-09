@@ -64,7 +64,19 @@ class Chart extends React.Component<any, any> {
                 case 'Array':
                     x.push(element[1])
                     y.push(element[2])
-                    text.push(element[0])
+                    if(Array.isArray(element[0])) {
+                        let temp = ""
+                        let y: any
+                        for(y in element[0]) {
+                            temp += element[0][y]
+                            if (y + 1 < element[0].length) {
+                                temp += "/"
+                            }
+                        }
+                        text.push(temp)
+                    } else {
+                        text.push(element[0])
+                    }
                     break
                 case 'QRank':
                     x.push(element['properties']['qrank_rank'])
@@ -96,6 +108,8 @@ class Chart extends React.Component<any, any> {
             link = "https://www.wikidata.org/wiki/"
         } else if (text.startsWith("way/") || text.startsWith("node/") || text.startsWith("relation/")) {
             link = "https://www.openstreetmap.org/"
+        } else if (RegExp("[+-]?([0-9]*[.])?[0-9]+\\/[+-]?([0-9]*[.])?[0-9]+").test(text)) {
+            link = "https://www.openstreetmap.org/#map=16/"
         }
         if(link !== "") {
             window.open(link + text, "_blank")

@@ -51,23 +51,25 @@ class App extends React.Component<any, any>{
     let graph: any;
     if(this.state.fileContents?.length === 0) {
         graph = <p>No file selected</p>
-    } else if (this.state.fileContents?.length === 1) {
-        graph = <div className={"Graph"}>
-            <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
-        </div>
-    } else {
-        graph = <div>
-            <div className={"Graph"}>
-                <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
-            </div>
-            <div className={"Listmovement"}>
-                <ListMovement fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
-            </div>
+    } else { // @ts-ignore
+        if (this.state.fileContents?.length === 2 && !this.state.importModes.includes("Array")) {
+                graph = <div>
+                    <div className={"Graph"}>
+                        <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+                    </div>
+                    <div className={"Listmovement"}>
+                        <ListMovement fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+                    </div>
 
-        </div>
+                </div>
+            } else {
+                graph = <div className={"Graph"}>
+                    <Chart fileContent={this.state.fileContents} titles={this.state.fileNames} importMode={this.state.importModes}/>
+                </div>
+            }
     }
 
-    return (
+      return (
         <div className={"App"}>
             <UploadButton parentCallback = {this.handleFileCallback} content={this.state.fileContents} titles={this.state.fileNames} />
             <Dropdown parentCallback = {this.handleImportCallback} />
