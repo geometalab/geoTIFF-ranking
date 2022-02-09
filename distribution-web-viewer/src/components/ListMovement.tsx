@@ -136,12 +136,15 @@ class ListMovement extends React.Component<any, any> {
         } else if(this.props.importMode[0] === "OSM") {
             text = this.json2[this.arrayKey2][j]['properties']['@id']
             counterPart = this.json1[this.arrayKey1][i]['properties']['wikidata']
+        } else if(this.props.importMode[0] === "Rank") {
+            text = this.json2[this.arrayKey2][j]['properties']['@id']
+            counterPart = this.json1[this.arrayKey1][i]['properties']['@id']
         }
         if(text === "") {
             text = "Import mode " + this.props.importMode[0]
         } else {
-            text += "<br>" + this.props.importMode[0] + " Rank: " + (i + 1) +
-                    "<br>" + this.props.importMode[1] + " Rank: " + (j + 1) +
+            text += "<br>" + this.props.importMode[0] + this.props.titles[0] + " Rank: " + (i + 1) +
+                    "<br>" + this.props.importMode[1] + this.props.titles[1] + " Rank: " + (j + 1) +
                     "<br>" + "Counterpart: " + counterPart
         }
         return text

@@ -9,10 +9,9 @@ class KeyDropdown extends React.Component<any, any> {
     }
 
     render() {
-        let availableKeys = ["Array", "QRank", "OSM"]
         let selectedKey = 0
         return <div className={"Dropdown"}>
-            <Dropdown options={availableKeys} onChange={this.passToParent} value={availableKeys[selectedKey]} placeholder="Select an option" />
+            <Dropdown options={this.props.keys} onChange={this.passToParent} value={this.props.keys[selectedKey]} placeholder="Select an option" />
         </div>
     }
 }

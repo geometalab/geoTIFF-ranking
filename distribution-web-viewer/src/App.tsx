@@ -1,7 +1,7 @@
 import React from 'react';
 import "./App.css"
-import UploadButton from "./components/uploadButton";
-import Dropdown from "./components/dropdown";
+import UploadButton from "./components/UploadButton";
+import Dropdown from "./components/Dropdown";
 import Chart from "./components/Chart";
 import ListMovement from "./components/ListMovement";
 
@@ -72,7 +72,7 @@ class App extends React.Component<any, any>{
       return (
         <div className={"App"}>
             <UploadButton parentCallback = {this.handleFileCallback} content={this.state.fileContents} titles={this.state.fileNames} />
-            <Dropdown parentCallback = {this.handleImportCallback} />
+            <Dropdown parentCallback = {this.handleImportCallback} keys={["Array", "QRank", "OSM", "Rank"]} />
             {graph}
         </div>
 

@@ -88,6 +88,11 @@ class Chart extends React.Component<any, any> {
                     y.push(element['properties']['tile_count'])
                     text.push(element['properties']['@id'])
                     break
+                case 'Rank':
+                    x.push(element['properties']['rank_rank'])
+                    y.push(element['properties']['rank'])
+                    text.push(element['properties']['@id'])
+                    break
                 default:
                     console.error("Fallthrough in switch.")
             }
