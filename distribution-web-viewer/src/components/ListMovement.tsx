@@ -19,7 +19,7 @@ class ListMovement extends React.Component<any, any> {
         plot_bgcolor: '#EFF1F3',
         title: "Deviations between the two Sets",
         xaxis: {
-            title: "Rank difference from " + this.props.titles[0] + " to " + this.props.titles[0],
+            title: "Rank difference from " + this.props.titles[0] + " to " + this.props.titles[1],
         },
         yaxis: {
             title: "Rank in " + this.props.titles[0],
