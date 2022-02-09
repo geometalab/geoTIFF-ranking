@@ -25,8 +25,7 @@ def calculate_rank(input_file, output_file, use_case):
     with open(input_file, "r", encoding='utf-8') as f:
         data = json.load(f)
 
-    max_osmviews = data['features'][0]['properties']['tile_count']
-    max_qrank = 0
+    max_qrank, max_osmviews = get_max(data)
 
     print("Calculating new rank property...")
     for feature in data['features']:
@@ -43,8 +42,6 @@ def calculate_rank(input_file, output_file, use_case):
             # Sasha Brawer's Method
             if 'qrank' in feature['properties'] and feature['properties']['qrank'] != 0:
                 qrank = feature['properties']['qrank']
-                if qrank > max_qrank:
-                    max_qrank = qrank
                 rank = math.log10(qrank) / math.log10(max_qrank) * 0.6 + math.log10(osm_views) / math.log10(
                     max_osmviews) * (1 - 0.6)
             else:
@@ -65,6 +62,21 @@ def calculate_rank(input_file, output_file, use_case):
     print("Done. Saved to %s." % output_file)
     if use_case == 2:
         print("Max OSM Views: %s, Max QRank: %s \n" % (max_osmviews, max_qrank))
+
+
+def get_max(data):
+    max_val_qrank = 0
+    max_val_osm = 0
+    for feature in data['features']:
+        if 'tile_count' in feature['properties']:
+            tile_count = feature['properties']['tile_count']
+            if tile_count > max_val_osm:
+                max_val_osm = tile_count
+        if 'qrank' in feature['properties']:
+            qrank = feature['properties']['qrank']
+            if qrank > max_val_qrank:
+                max_val_qrank = qrank
+    return max_val_qrank, max_val_osm
 
 
 if __name__ == '__main__':
