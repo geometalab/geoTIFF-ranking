@@ -90,10 +90,7 @@ def generate_ranking_from_geojson():
         data = json.load(f)
 
     # Display Distribution of OSM Features with a Wikidata Tag
-    create_visualisation(data)
-
-    # Remove all features not containing a wikidata tag
-    data, num_of_missing_wikidata_tag = filter_unusable_features(data)
+    # create_visualisation(data)
 
     # Looping through all remaining features, getting the qrank for each one
     print("Adding qrank property to data.")
@@ -102,8 +99,16 @@ def generate_ranking_from_geojson():
         progress_count += 1
         print("Processing %s of %s features" % (progress_count, len(data['features'])))
         # add the qrank property to the feature
-        wikidata_tag = feature['properties']['wikidata']
-        feature['properties'].update({"qrank": get_qrank(wikidata_tag, qrank_rows)})
+        if 'wikidata' in feature['properties']:
+            wikidata_tag = feature['properties']['wikidata']
+            feature['properties'].update({"qrank": get_qrank(wikidata_tag, qrank_rows)})
+
+    # Override the geojson file, now with added qrank where wikidata tag is available
+    with open(geojson_file, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=4, ensure_ascii=False)
+
+    # Remove all features not containing a wikidata tag
+    data, num_of_missing_wikidata_tag = filter_unusable_features(data)
 
     # Sort and Rank by Tile Views
     data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
@@ -129,7 +134,7 @@ def generate_ranking_from_geojson():
     data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
     osm_ordered_data = data
 
-    # Save the osm file
+    # Save the synced osm file
     with open(output_path_osm_synced, "w", encoding="utf-8") as f:
         json.dump(osm_ordered_data, f, indent=4, ensure_ascii=False)
 
