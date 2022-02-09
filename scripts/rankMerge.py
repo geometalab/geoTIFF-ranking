@@ -55,6 +55,11 @@ def calculate_rank(input_file, output_file, use_case):
     # Sort by newly generated rank property
     data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['rank']), reverse=True)
 
+    rank = 0
+    for feature in data['features']:
+        rank += 1
+        feature['properties'].update({"rank_rank": rank})
+
     # Save method in file
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=4, ensure_ascii=False)
