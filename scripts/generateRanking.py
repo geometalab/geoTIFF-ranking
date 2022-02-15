@@ -11,7 +11,7 @@ def find_file():
     output_path_qrank = "output-qrank.geojson"
     output_path_osm_synced = "output-tile-logs-synced.geojson"
     qrank_file = "qrank.csv"
-    geojson_file = ""
+    geojson_file = "output-tile-logs.geojson"
 
     if not exists(qrank_file):
         print("Could not find a file named %s." % qrank_file)
@@ -23,16 +23,17 @@ def find_file():
         if file.endswith(".geojson"):
             file_list.append(file)
 
-    if len(file_list) == 0:
-        print("Found no geojson file.")
-        exit()
+    if not exists(geojson_file):
+        if len(file_list) == 0:
+            print("Found no geojson file.")
+            exit()
 
-    if len(file_list) > 1:
-        print("Found more than one .geojson file, please specify which file to use:")
-        geojson_file = input("Enter file name: ")
+        if len(file_list) > 1:
+            print("Found more than one .geojson file, please specify which file to use:")
+            geojson_file = input("Enter file name: ")
 
-    if len(file_list) == 1:
-        geojson_file = file_list[0]
+        if len(file_list) == 1:
+            geojson_file = file_list[0]
 
     return qrank_file, geojson_file, output_path_qrank, output_path_osm_synced
 

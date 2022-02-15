@@ -42,8 +42,8 @@ def calculate_rank(input_file, output_file, use_case):
             # Sasha Brawer's Method
             if 'qrank' in feature['properties'] and feature['properties']['qrank'] != 0:
                 qrank = feature['properties']['qrank']
-                rank = math.log10(qrank) / math.log10(max_qrank) * 0.6 + math.log10(osm_views) / math.log10(
-                    max_osmviews) * (1 - 0.6)
+                rank = math.log10(qrank) / math.log10(max_qrank) * 0.8 + math.log10(osm_views) / math.log10(
+                    max_osmviews) * (1 - 0.8)
             else:
                 rank = math.log10(osm_views) / 10
         else:
