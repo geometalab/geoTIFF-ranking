@@ -31,7 +31,7 @@ These two files can be used to compare the two methods of ranking (QRank and OSM
 
 ## rankMerge.py
 
-Takes a geoJson with objects containing at least the `tile_count` and optionally the `qrank` property and combines the values to a new `rank` property. Two files will then be created, containing and sorted by this rank property. 
+Takes a geoJson with objects containing at least the `osm_views` and optionally the `qrank` property and combines the values to a new `rank` property. Two files will then be created, containing and sorted by this rank property. 
 
 This is for testing the effective combination of OSM Tile Counts and QRank.
 
