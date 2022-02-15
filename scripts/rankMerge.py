@@ -30,7 +30,7 @@ def calculate_rank(input_file, output_file, use_case):
     print("Calculating new rank property...")
     for feature in data['features']:
         rank = 0
-        osm_views = feature['properties']['tile_count']
+        osm_views = feature['properties']['osm_views']
         if use_case == 1:
             # Stefan Keller's Method
             if 'qrank' in feature['properties'] and feature['properties']['qrank'] != 0:
@@ -73,10 +73,10 @@ def get_max(data):
     max_val_qrank = 0
     max_val_osm = 0
     for feature in data['features']:
-        if 'tile_count' in feature['properties']:
-            tile_count = feature['properties']['tile_count']
-            if tile_count > max_val_osm:
-                max_val_osm = tile_count
+        if 'osm_views' in feature['properties']:
+            osm_views = feature['properties']['osm_views']
+            if osm_views > max_val_osm:
+                max_val_osm = osm_views
         if 'qrank' in feature['properties']:
             qrank = feature['properties']['qrank']
             if qrank > max_val_qrank:

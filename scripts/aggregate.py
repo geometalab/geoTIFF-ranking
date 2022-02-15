@@ -71,7 +71,7 @@ def reduce_content(data):
             name = feature['properties']['name']
         if 'wikidata' in feature['properties']:
             wikidata = feature['properties']['wikidata']
-        tile_count = feature['properties']['tile_count']
+        osm_views = feature['properties']['osm_views']
         id = feature['properties']['@id']
         del feature['properties']
         feature.update({"properties": {}})
@@ -80,7 +80,7 @@ def reduce_content(data):
             feature['properties'].update({"name": name})
         if wikidata != "":
             feature['properties'].update({"wikidata": wikidata})
-        feature['properties'].update({"tile_count": tile_count})
+        feature['properties'].update({"osm_views": osm_views})
         del feature['id']
 
 
@@ -99,12 +99,12 @@ def main(reduce):
         print("Getting tile counts: %s of %s" % (progress, str(len(data["features"]))))
 
         value = val_at_coord(feature['geometry']['coordinates'])
-        feature['properties'].update({"tile_count": value})
+        feature['properties'].update({"osm_views": value})
         progress += 1
 
     # Sort features by tile count, the highest first
     print("Sorting dataset...")
-    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['osm_views']), reverse=True)
 
     # Remove some data to make output json cleaner
     if reduce:

@@ -112,7 +112,7 @@ def generate_ranking_from_geojson():
     data, num_of_missing_wikidata_tag = filter_unusable_features(data)
 
     # Sort and Rank by Tile Views
-    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['osm_views']), reverse=True)
     rank = 0
     for feature in data['features']:
         rank += 1
@@ -132,7 +132,7 @@ def generate_ranking_from_geojson():
         json.dump(qrank_ordered_data, f, indent=4, ensure_ascii=False)
 
     # Sort by Tile Views again
-    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['tile_count']), reverse=True)
+    data['features'] = sorted(data['features'], key=lambda x: float(x['properties']['osm_views']), reverse=True)
     osm_ordered_data = data
 
     # Save the synced osm file
